@@ -1,13 +1,15 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-1000)]
 public class Map : MonoBehaviour
 {
     [field: SerializeField] public int SnapSize { get; private set; } = 10;
-    [SerializeField] private Vector2Int _size;
-    [SerializeField] private bool _showGizmo;
     public Dictionary<Vector2Int, Node> Grid { get; private set; } = new();
+    [SerializeField] private Vector2Int _size;
+#if UNITY_EDITOR
+    [SerializeField] private bool _showGizmo;
+#endif
 
     public void BlockNode(Vector2Int coords)
     {
@@ -23,7 +25,7 @@ public class Map : MonoBehaviour
             node.Value.IsPath = false;
         }
     }
-    
+
     public Vector2Int WorldToCoords(Vector3 worldPosition)
     {
         return new(Mathf.RoundToInt(worldPosition.x / SnapSize), Mathf.RoundToInt(worldPosition.z / SnapSize));
@@ -31,9 +33,9 @@ public class Map : MonoBehaviour
 
     public Vector3 CoordsToWorld(Vector2Int coords)
     {
-        return new(coords.x * SnapSize + transform.position.x, transform.position.y, coords.y * SnapSize + transform.position.z);
+        return new(coords.x * SnapSize, transform.position.y, coords.y * SnapSize);
     }
-    
+
     private void Awake()
     {
         CreateGrid();
@@ -50,6 +52,7 @@ public class Map : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (_showGizmo)
@@ -60,25 +63,16 @@ public class Map : MonoBehaviour
                 if (node.Value.IsPath)
                 {
                     Gizmos.color = Color.yellow;
-                    Gizmos.DrawSphere(position,1f);
+                    Gizmos.DrawSphere(position, 1f);
+                }
+
+                if (node.Value.IsExplored)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(position, 1f);
                 }
             }
         }
     }
-}
-
-[Serializable]
-public class Node
-{
-    public Node Parent;
-    public Vector2Int Coordinates;
-    public bool IsWalkable;
-    public bool IsExplored;
-    public bool IsPath;
-
-    public Node(Vector2Int coordinates, bool isWalkable)
-    {
-        Coordinates = coordinates;
-        IsWalkable = isWalkable;
-    }
+#endif
 }

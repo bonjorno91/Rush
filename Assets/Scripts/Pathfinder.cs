@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Map))]
+[RequireComponent(typeof(Map))][DefaultExecutionOrder(-50)]
 public class Pathfinder : MonoBehaviour
 {
     public event Action OnPathUpdated;
@@ -52,7 +52,7 @@ public class Pathfinder : MonoBehaviour
 
             if (path.Count <= 1)
             {
-                GetNewPath();
+                _path = GetNewPath();
                 return true;
             }
         }

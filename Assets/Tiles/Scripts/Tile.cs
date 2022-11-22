@@ -1,7 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-[SelectionBase]
+[SelectionBase][DefaultExecutionOrder(-75)]
 public class Tile : MonoBehaviour
 {
     [field: SerializeField] public ReactiveProperty<bool> IsPlaceable { get; private set; } = new(false);
@@ -17,14 +17,7 @@ public class Tile : MonoBehaviour
         _map = FindObjectOfType<Map>();
         _pathfinder = FindObjectOfType<Pathfinder>();
         if (_map) _coords = _map.WorldToCoords(transform.position);
-    }
-
-    private void OnEnable()
-    {
-        if (_map)
-        {
-            if (!IsPlaceable.Value) _map.BlockNode(_coords);
-        }
+        if (!IsPlaceable.Value) _map.BlockNode(_coords);
     }
 
     private void OnMouseDown()
