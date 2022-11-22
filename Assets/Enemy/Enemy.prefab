@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2a2f01a3f9d1bc4baf6568f06ccf02c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 1
+  _moveSpeed: 3
   _path: []
 --- !u!114 &7821507157555391352
 MonoBehaviour:
@@ -193,7 +193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4471772c8127b0646994b045325667d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitPointsMax: 5
+  _hitPointsMax: 8
 --- !u!65 &6619849926073889059
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,5 +1,4 @@
 using System;
-using TMPro;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Game/Bank/Create Account", fileName = "BankAccount", order = 0)]

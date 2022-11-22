@@ -1,18 +1,25 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Tiles;
 using UnityEngine;
 
 public class EnemySteering : MonoBehaviour
 {
     public event Action OnArrived;
     [Range(1, 10)] [SerializeField] private float _moveSpeed = 1f;
-    [SerializeField] private List<Tile> _path = new();
+    [SerializeField] private List<Node> _path = new();
+    private Pathfinder _pathfinder;
+    private Map _map;
+
+    private void Awake()
+    {
+        _map = FindObjectOfType<Map>();
+        _pathfinder = FindObjectOfType<Pathfinder>();
+    }
 
     public void StartFollowPath()
     {
-        FindPath();
+        _path = _pathfinder.GetNewPath();
         StartCoroutine(FollowPath());
     }
 
@@ -21,26 +28,23 @@ public class EnemySteering : MonoBehaviour
         StopAllCoroutines();
     }
 
-    private void FindPath()
+    public void UpdatePath(Pathfinder pathfinder)
     {
+        StopAllCoroutines();
         _path.Clear();
-
-        var tiles = GameObject.FindGameObjectWithTag("Path");
-
-        foreach (Transform child in tiles.transform)
-        {
-            _path.Add(child.GetComponent<Tile>());
-        }
+        _path = pathfinder.GetNewPathFor(_map.WorldToCoords(gameObject.transform.position));
+        StartCoroutine(FollowPath());
     }
 
     private IEnumerator FollowPath()
     {
-        foreach (var tile in _path)
+        for (int i = 1; i < _path.Count; i++)
         {
             var travelPercent = 0f;
             var startPosition = gameObject.transform.position;
-            var endPosition = tile.gameObject.transform.position;
-            gameObject.transform.LookAt(tile.transform);
+            var endPosition = _map.CoordsToWorld(_path[i].Coordinates);
+            
+            gameObject.transform.LookAt(endPosition);
 
             while (travelPercent < 1f)
             {

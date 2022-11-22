@@ -4,12 +4,6 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Object = UnityEngine.Object;
 
-public interface IValueEntry<out TEntry>
-{
-    TEntry Value { get; }
-    void Release();
-}
-
 public abstract class Factory<TKey, TValue> : InitializeOnStartSO where TValue : Component
 {
     private class ValueStore<TEntryKey, TEntryValue> where TEntryValue : Object

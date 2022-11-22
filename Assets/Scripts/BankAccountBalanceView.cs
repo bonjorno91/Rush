@@ -10,7 +10,6 @@ public class BankAccountBalanceView : MonoBehaviour
     private void Awake()
     {
         _textLabel = GetComponent<TMP_Text>();
-        // UpdateBalanceLabel(_account.CurrentBalance);
     }
 
     private void OnEnable()
