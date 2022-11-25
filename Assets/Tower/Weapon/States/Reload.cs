@@ -1,17 +1,10 @@
 using UnityEngine;
 
-public sealed class Reload : IWeaponState<float>
+public sealed class Reload : IWeaponState<IWeapon>
 {
-    private readonly IWeaponBrain _weapon;
-    private readonly Transform _projectileTransform;
     private float _timer;
-
-    public Reload(IWeaponBrain weapon,Transform projectileTransform)
-    {
-        _projectileTransform = projectileTransform;
-        _weapon = weapon;
-    }
-
+    private IWeapon _weapon;
+    
     public bool Shoot(Transform target)
     {
         return false;
@@ -19,26 +12,23 @@ public sealed class Reload : IWeaponState<float>
 
     #region State
 
-    public void OnEnter(float payload)
+    public void OnEnter(IWeapon payload)
     {
-        _timer = payload;
+        _weapon = payload;
+        _timer = _weapon.CooldownTime;
     }
 
     public void Tick()
     {
-        if (_timer <= 0) _weapon.EnterState<Ready, ProjectileBehaviour>(GetProjectile());
+        if (_timer <= 0) _weapon.Reload();
         else _timer -= Time.deltaTime;
     }
 
     public void OnExit()
     {
+        _weapon = null;
         _timer = 0;
     }
 
     #endregion
-
-    private ProjectileBehaviour GetProjectile()
-    {
-        return Object.Instantiate(_weapon.Projectile, _projectileTransform).Initialize();
-    }
 }

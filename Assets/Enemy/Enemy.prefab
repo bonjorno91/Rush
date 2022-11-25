@@ -167,8 +167,8 @@ MonoBehaviour:
   _destroySoundFX: {fileID: 8742406615608936083, guid: 7c944f0e50721e14c8718a812979f3ab,
     type: 3}
   _account: {fileID: 11400000, guid: 22836036d303c8648b1f553996080d48, type: 2}
-  _goldReward: 25
-  _goldPenalty: 25
+  _goldReward: 2
+  _goldPenalty: 5
 --- !u!114 &9199891254881398618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4471772c8127b0646994b045325667d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitPointsMax: 10
+  _hitPointsMax: 5
 --- !u!65 &6619849926073889059
 BoxCollider:
   m_ObjectHideFlags: 0

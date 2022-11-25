@@ -1,27 +1,50 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
-public sealed class TowerWeapon : Weapon, IWeaponBrain
+public sealed class TowerWeapon : Weapon, IStateMachine<IWeaponState>
 {
     [SerializeField] private Transform _launchTransform;
-    [SerializeField] private int _initialCooldown;
+    private ObjectPool<Projectile> _projectilePool;
+    
+    public override void Reload()
+    {
+        _projectilePool.Get(out var projectile);
+        EnterState<Ready, IProjectile>(projectile);
+    }
 
     public override bool Shoot(Transform target)
     {
-        return _currentState?.Shoot(target) ?? false;
+        if (_currentState == null) return false;
+
+        return TryShoot(target);
+    }
+
+    private bool TryShoot(Transform target)
+    {
+        if (_currentState.Shoot(target))
+        {
+            PlayReleaseSound();
+            EnterState<Reload, IWeapon>(this);
+            return true;
+        }
+
+        return false;
     }
 
     #region MonoCallbacks
 
-    private void Awake()
+    protected void Awake()
     {
+        base.Awake();
+        SetupProjectilePool();
         SetupStateMachine();
     }
-
+    
     private void OnEnable()
     {
-        EnterState<Reload, float>(_initialCooldown);
+        EnterState<Reload, IWeapon>(this);
     }
 
     private void Update()
@@ -31,6 +54,39 @@ public sealed class TowerWeapon : Weapon, IWeaponBrain
 
     #endregion
 
+    #region Pool
+
+    private void SetupProjectilePool()
+    {
+        _projectilePool = new ObjectPool<Projectile>(Create, Get, Release, Destroy);
+    }
+
+    private Projectile Create()
+    {
+        var instance = Instantiate(Projectile, _launchTransform);
+        
+        instance.Configure(_projectileConfig);
+        instance.SetReleaseHandle(_projectilePool.Release);
+        
+        return instance;
+    }
+
+    private void Get(Projectile obj)
+    {
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
+        obj.Configure(_projectileConfig);
+        obj.gameObject.SetActive(true);
+    }
+
+    private void Release(Projectile obj)
+    {
+        obj.gameObject.SetActive(false);
+        obj.transform.SetParent(_launchTransform);
+    }
+
+    #endregion
+    
     #region StateMachine
 
     private readonly Dictionary<Type, IWeaponState> _weaponStates = new();
@@ -48,8 +104,8 @@ public sealed class TowerWeapon : Weapon, IWeaponBrain
 
     private void SetupStateMachine()
     {
-        var readyState = new Ready(this);
-        var reloadState = new Reload(this, _launchTransform);
+        var readyState = new Ready();
+        var reloadState = new Reload();
 
         _weaponStates.Add(typeof(Ready), readyState);
         _weaponStates.Add(typeof(Reload), reloadState);

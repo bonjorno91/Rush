@@ -1,40 +1,27 @@
 using UnityEngine;
 
-public class Ready : IWeaponState<ProjectileBehaviour>
+public class Ready : IWeaponState<IProjectile>
 {
-    private readonly IWeaponBrain _weapon;
-    private ProjectileBehaviour _projectile;
-
-    public Ready(IWeaponBrain weapon)
-    {
-        _weapon = weapon;
-    }
-
+    private IProjectile _projectile;
+    
     public bool Shoot(Transform target)
     {
-        if (_projectile)
-        {
-            if (_projectile.PerformShoot(target))
-            {
-                _weapon.EnterState<Reload,float>(_weapon.CooldownTime);
-                return true;
-            }
-        }
-
-        return false;
+        _projectile.PerformShoot(target);
+        return true;
     }
 
     public void Tick()
     {
+        
     }
 
-    public void OnEnter(ProjectileBehaviour payload)
+    public void OnEnter(IProjectile payload)
     {
         _projectile = payload;
     }
 
     public void OnExit()
     {
-        
+        _projectile = null;
     }
 }

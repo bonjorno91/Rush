@@ -1,7 +1,11 @@
+using System;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public abstract class Weapon : MonoBehaviour, IWeapon
 {
+    private AudioSource _audioSource;
+
     [field: Header("Weapon Settings")]
     [field: SerializeField]
     [field: Min(1)]
@@ -20,17 +24,15 @@ public abstract class Weapon : MonoBehaviour, IWeapon
     public float CooldownTime { get; protected set; } = 1f;
 
     [field: Header("Projectile Settings")]
-    [field: SerializeField]
-    [field: Min(1)]
-    public int Damage { get; protected set; } = 1;
-
-    [field: SerializeField]
-    [field: Min(0)]
-    public float ProjectileSpeed { get; protected set; } = 30;
-
     [field: SerializeField] 
-    public ProjectileBehaviour Projectile { get; protected set; }
+    public Projectile Projectile { get; protected set; }
 
+    [field: SerializeField] protected Projectile.Config _projectileConfig;
+
+    [field: Header("Sound Setting")]
+    [field: SerializeField] 
+    public AudioClip ReleaseClip { get; protected set; }
+    
     public bool Aim(Vector3 targetPosition)
     {
         var offset = Vector3.Lerp(transform.position + transform.forward, targetPosition, AimSpeed * Time.deltaTime);
@@ -41,9 +43,9 @@ public abstract class Weapon : MonoBehaviour, IWeapon
         return targetAngle <= AngleAccuracy;
     }
 
-    public bool IsWithinRange(Vector3 enemy)
+    public bool IsWithinRange(Vector3 enemyHitPoint)
     {
-        return transform.position.DistanceXZ(enemy) <= Range;
+        return transform.position.DistanceXZ(enemyHitPoint) <= Range;
     }
 
     public float DistanceTo(Vector3 enemyHitPoint)
@@ -51,5 +53,21 @@ public abstract class Weapon : MonoBehaviour, IWeapon
         return transform.position.DistanceXZ(enemyHitPoint);
     }
 
+    protected void PlayReleaseSound()
+    {
+        _audioSource.PlayOneShot(ReleaseClip);
+    }
+
+    public abstract void Reload();
+
     public abstract bool Shoot(Transform target);
+
+    #region MonoCallbacks
+
+    protected void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
+
+    #endregion
 }

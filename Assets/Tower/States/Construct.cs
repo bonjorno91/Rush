@@ -5,12 +5,11 @@ public sealed class Construct : ITowerState, IStatePayload<Transform>
 {
     private readonly ITowerBrain _towerBrain;
     private readonly Queue<Transform> _partsToConstruct;
+    private readonly UIBuildProgressBar _progressBar;
     private Transform _currentConstructPart;
     private Transform _origin;
     private float _partConstructTime;
     private float _timeLeft;
-    private UIBuildProgressBar _progressBar;
-    private float _totalProgress;
 
     public Construct(ITowerBrain towerBrain, UIBuildProgressBar progressBar)
     {
@@ -29,7 +28,6 @@ public sealed class Construct : ITowerState, IStatePayload<Transform>
         
         _origin = payload;
         _partConstructTime = _towerBrain.ConstructionTime / _origin.childCount;
-        _totalProgress = 0;
         FindParts(payload);
         DisableParts(payload);
         _progressBar.Show(payload);
