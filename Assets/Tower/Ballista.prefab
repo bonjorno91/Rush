@@ -47,10 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f23e0d48d9564366a651bf8306429c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <ConstructionCost>k__BackingField: 50
+  <ConstructionTime>k__BackingField: 3
   <EnemyFactory>k__BackingField: {fileID: 11400000, guid: 22a8577cfed9380419d3c95378ab50b1,
     type: 2}
-  <ConstructionCost>k__BackingField: 50
-  <ConstructionTime>k__BackingField: 1
 --- !u!82 &4272646532434132248
 AudioSource:
   m_ObjectHideFlags: 0
@@ -284,6 +284,7 @@ MonoBehaviour:
   <Projectile>k__BackingField: {fileID: 2958272614242522313, guid: 7362a7dc6d14d7748953ae63138db72f,
     type: 3}
   _launchTransform: {fileID: 2291462891690311151}
+  _initialCooldown: 0
 --- !u!1 &8293807043288370748
 GameObject:
   m_ObjectHideFlags: 0

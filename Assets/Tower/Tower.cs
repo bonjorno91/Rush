@@ -7,9 +7,9 @@ public class Tower : MonoBehaviour, ITowerBrain
 {
     private UIBuildProgressBar _progressBar;
     [field: SerializeField] public int ConstructionCost { get; private set; }
+    [field: SerializeField] public float ConstructionTime { get; private set; } = 1f;
     [field: SerializeField] public EnemyFactory EnemyFactory { get; private set; }
     [field: SerializeField] public IWeapon Weapon { get; private set; }
-    [field: SerializeField] public float ConstructionTime { get; private set; } = 1f;
 
     public void SetBuildProgressBar(UIBuildProgressBar progressBar)
     {

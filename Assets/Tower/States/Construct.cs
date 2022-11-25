@@ -62,13 +62,13 @@ public sealed class Construct : ITowerState, IStatePayload<Transform>
             else
             {
                 _timeLeft += deltaTime;
+                _currentConstructPart.gameObject.SetActive(true);
             }
         }
         else
         {
             if (_timeLeft >= _partConstructTime)
             {
-                _currentConstructPart.gameObject.SetActive(true);
                 _currentConstructPart = null;
                 _timeLeft -= _partConstructTime;
             }
