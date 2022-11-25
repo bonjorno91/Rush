@@ -15,3 +15,5 @@ MonoBehaviour:
   <Config>k__BackingField: {fileID: 11400000, guid: f5391fb22a9d1f5489f2c6f98ed8eba1,
     type: 2}
   _account: {fileID: 11400000, guid: 22836036d303c8648b1f553996080d48, type: 2}
+  _buildProgressBarPrefab: {fileID: 7944998004231549506, guid: f65cf08a2dcf6d04ebefd2ec6af69eb6,
+    type: 3}

@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 102713639503501691}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.5, z: 0}
+  m_LocalPosition: {x: 0, y: 1.28, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -164,6 +164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <HitPoint>k__BackingField: {fileID: 6087690736783354484}
+  _destroySoundFX: {fileID: 8742406615608936083, guid: 7c944f0e50721e14c8718a812979f3ab,
+    type: 3}
   _account: {fileID: 11400000, guid: 22836036d303c8648b1f553996080d48, type: 2}
   _goldReward: 25
   _goldPenalty: 25
@@ -179,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2a2f01a3f9d1bc4baf6568f06ccf02c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 2
+  _moveSpeed: 1
   _path: []
 --- !u!114 &7821507157555391352
 MonoBehaviour:
@@ -193,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4471772c8127b0646994b045325667d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitPointsMax: 3
+  _hitPointsMax: 10
 --- !u!65 &6619849926073889059
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemySteering))]
@@ -8,12 +9,13 @@ public class Enemy : MonoBehaviour
 {
     public event Action<Enemy> OnDeath;
     [field: SerializeField] public Transform HitPoint { get; private set; }
+    [SerializeField] private GameObject _destroySoundFX;
     [SerializeField] private BankAccount _account;
     [SerializeField] private int _goldReward = 25;
     [SerializeField] private int _goldPenalty = 25;
     private EnemyHealth _enemyHealth;
     private EnemySteering _enemySteering;
-    
+
     private void Awake()
     {
         _enemySteering = GetComponent<EnemySteering>();
@@ -46,6 +48,7 @@ public class Enemy : MonoBehaviour
 
     private void Reclaim()
     {
+        Destroy(Instantiate(_destroySoundFX, transform.position, quaternion.identity), 1);
         OnDeath?.Invoke(this);
     }
 }

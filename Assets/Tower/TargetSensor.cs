@@ -1,44 +1,20 @@
+using System;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TargetSensor : MonoBehaviour
 {
     [SerializeField] private EnemyFactory _enemyFactory;
-    [SerializeField] private Transform _weapon;
+    [SerializeField] private Weapon _weapon;
     [SerializeField] private ParticleSystem _particle;
     [SerializeField] private float _range = 10;
+    private Vector3 _idleTarget;
     private Enemy _target;
 
-    private void FindTarget()
+    private void Awake()
     {
-        if (!_target)
-        {
-            if (_enemyFactory.TryGetAllActive(out var active))
-            {
-                var enemiesByDistance = from aliveEnemy in active
-                    where InRange(aliveEnemy.transform)
-                    orderby DistanceBetween(gameObject.transform,aliveEnemy.transform) descending
-                    select aliveEnemy;
-
-                if (enemiesByDistance.Any()) TargetAcquired( enemiesByDistance.First());
-            }
-        }
-    }
-
-    private void TargetAcquired(Enemy enemy)
-    {
-        _target = enemy;
-        _weapon.LookAt(_target.HitPoint);
-        _particle.Play();
-        _target.OnDeath += TargetLost;
-    }
-
-    private void TargetLost(Enemy enemy)
-    {
-        _particle.Stop(false);
-        _target.OnDeath -= TargetLost;
-        _target = null;
-        FindTarget();
+        _idleTarget = _weapon.transform.forward;
     }
 
     private void Update()
@@ -47,22 +23,69 @@ public class TargetSensor : MonoBehaviour
         else FindTarget();
     }
 
-    private void AimTarget()
+    private void FindTarget()
     {
-        if (InRange(_target.transform))
+        if (!_target)
+            if (_enemyFactory.TryGetAllActive(out var enemies))
+            {
+                var enemiesByDistance = from enemy in enemies
+                    where InRange(enemy.transform)
+                    orderby DistanceBetween(gameObject.transform, enemy.transform) descending
+                    select enemy;
+
+                if (enemiesByDistance.Any()) TargetAcquired(enemiesByDistance.First());
+                else Idle();
+            }
+    }
+
+    private void Idle()
+    {
+        var angle = Vector3.Angle(_weapon.transform.forward, _idleTarget);
+        
+        if (angle > 3)
         {
-            _weapon.LookAt(_target.HitPoint);
+            var offset = Vector3.Lerp(_weapon.transform.forward, _idleTarget, Time.deltaTime);
+            _weapon.transform.LookAt(_weapon.transform.position + offset);
         }
         else
         {
-            TargetLost(_target);
+            _idleTarget = new Vector3(Random.Range(-2, 2), 0, Random.Range(-2, 2)).normalized;
         }
+    }
+
+    private void TargetAcquired(Enemy enemy)
+    {
+        _target = enemy;
+        _weapon.transform.LookAt(_target.HitPoint);
+        _particle.Play();
+        _target.OnDeath += TargetLost;
+    }
+
+    private void TargetLost(Enemy enemy)
+    {
+        _particle.Stop(false);
+        _idleTarget = _weapon.transform.forward;
+        enemy.OnDeath -= TargetLost;
+        _target = null;
+        FindTarget();
+    }
+
+    private void AimTarget()
+    {
+        if (InRange(_target.transform))
+            _weapon.transform.LookAt(_target.HitPoint);
+            
+        else
+            TargetLost(_target);
     }
 
     private bool InRange(Transform targetTransform)
     {
-        return DistanceBetween(gameObject.transform,targetTransform) <= _range;
+        return DistanceBetween(gameObject.transform, targetTransform) <= _range;
     }
 
-    private float DistanceBetween(Transform a, Transform b) => Mathf.Sqrt(Mathf.Pow(a.position.x - b.position.x, 2) + Mathf.Pow(a.position.z - b.position.z, 2));
+    private float DistanceBetween(Transform a, Transform b)
+    {
+        return Mathf.Sqrt(Mathf.Pow(a.position.x - b.position.x, 2) + Mathf.Pow(a.position.z - b.position.z, 2));
+    }
 }

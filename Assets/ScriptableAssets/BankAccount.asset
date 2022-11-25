@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0136db0f57786e945b105dd9bba22ae9, type: 3}
   m_Name: BankAccount
   m_EditorClassIdentifier: 
-  _startBalance: 1500
-  _currentBalance: 2275
+  _startBalance: 150
+  _currentBalance: 475

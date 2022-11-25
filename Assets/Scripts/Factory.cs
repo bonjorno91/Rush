@@ -87,6 +87,8 @@ public abstract class Factory<TKey, TValue> : InitializeOnStartSO where TValue :
 
     [field: SerializeField] protected FactoryConfig<TKey, TValue> Config { get; private set; }
     private readonly Dictionary<TKey, ValueStore<TKey, TValue>> _valueStores = new();
+    private readonly List<TValue> _activeCollection = new();
+    private bool _isDirty = true;
 
     public virtual bool TryGet(TKey key,Vector3 position,Quaternion rotation,out IValueEntry<TValue> result)
     {
@@ -103,7 +105,7 @@ public abstract class Factory<TKey, TValue> : InitializeOnStartSO where TValue :
         result = _valueStores[key].Get();
         result.Value.transform.position = position;
         result.Value.transform.rotation = rotation;
-        
+        _isDirty = true;
         return true;
     }
 
@@ -119,18 +121,21 @@ public abstract class Factory<TKey, TValue> : InitializeOnStartSO where TValue :
     public bool TryGetAllActive(out IReadOnlyCollection<TValue> values)
     {
         values = default;
-
         if (_valueStores.Keys.Count == 0) return false;
-
-        var result = new List<TValue>();
-
-        foreach (var storesValue in _valueStores.Values)
+        
+        if (_isDirty)
         {
-            result.AddRange(storesValue.ActiveCollection);
+            _activeCollection.Clear();
+            
+            foreach (var storesValue in _valueStores.Values)
+            {
+                _activeCollection.AddRange(storesValue.ActiveCollection);
+            }
+            
+            _isDirty = false;
         }
-
-        values = result;
-
+        
+        values = _activeCollection;
         return true;
     }
 

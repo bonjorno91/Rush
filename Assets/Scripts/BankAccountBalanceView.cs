@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -10,6 +11,11 @@ public class BankAccountBalanceView : MonoBehaviour
     private void Awake()
     {
         _textLabel = GetComponent<TMP_Text>();
+    }
+
+    private void Start()
+    {
+        UpdateBalanceLabel(_account.CurrentBalance);
     }
 
     private void OnEnable()

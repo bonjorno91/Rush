@@ -5,31 +5,41 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     [field: SerializeField] public ReactiveProperty<bool> IsPlaceable { get; private set; } = new(false);
-    [SerializeField] private TowerFactory _towerFactory;
-    [SerializeField] private TowerType _spawnTower;
+    [SerializeField] private UITowerBuildPanel _buildPanel;
     private IValueEntry<Tower> _content;
     private Map _map;
     private Pathfinder _pathfinder;
     private Vector2Int _coords;
 
+    public void PlaceTower(IValueEntry<Tower> towerType)
+    {
+        _content = towerType;
+        _map.BlockNode(_coords);
+        IsPlaceable.Value = !IsPlaceable.Value;
+        _pathfinder.UpdatePath();
+    }
+
     private void Awake()
     {
         _map = FindObjectOfType<Map>();
         _pathfinder = FindObjectOfType<Pathfinder>();
+        _buildPanel = FindObjectOfType<UITowerBuildPanel>();
         if (_map) _coords = _map.WorldToCoords(transform.position);
         if (!IsPlaceable.Value) _map.BlockNode(_coords);
     }
 
-    private void OnMouseDown()
+    private void OnMouseUp()
     {
-        if (_map.Grid[_coords].IsWalkable && !_pathfinder.WillBlockPath(_coords))
+        if (_content == null)
         {
-            if (_towerFactory.TryGet(_spawnTower, gameObject.transform.position, quaternion.identity, out _content))
+            if (_map.Grid[_coords].IsWalkable && !_pathfinder.WillBlockPath(_coords))
             {
-                IsPlaceable.Value = !IsPlaceable.Value;
-                _map.BlockNode(_coords);
-                _pathfinder.UpdatePath();
+                _buildPanel.OnBuild(this);
             }
+        }
+        else
+        {
+            // TODO: popup content menu
         }
     }
 }

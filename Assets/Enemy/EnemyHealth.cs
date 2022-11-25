@@ -17,11 +17,11 @@ public class EnemyHealth : MonoBehaviour
         OnDeath?.Invoke();
     }
 
-    private void OnParticleCollision(GameObject other) => ProcessHit();
-
-    private void ProcessHit()
+    public void TakeDamage(int damage)
     {
-        if (--_currentHitPoints <= 0)
+        _currentHitPoints -= damage;
+        
+        if (_currentHitPoints <= 0)
         {
             OnDead();
         }
